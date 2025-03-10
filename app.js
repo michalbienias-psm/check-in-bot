@@ -56,7 +56,7 @@ async function getSecret(secretName) {
       try {
         const dm = await app.client.conversations.open({ users: userId });
   
-        await app.client.chat.postMessage({
+        const result = await app.client.chat.postMessage({
           channel: dm.channel.id,
           "blocks": [
             {
@@ -79,6 +79,19 @@ async function getSecret(secretName) {
             }
           ]
         });
+
+        // Schedule delete after 60 seconds (for testing)
+        setTimeout(async () => {
+          try {
+            await app.client.chat.delete({
+              channel: result.channel,
+              ts: result.ts
+            });
+            console.log(`🗑️ Deleted message sent to ${userId}`);
+          } catch (err) {
+            console.error("❌ Failed to delete message:", err);
+          }
+        }, 60 * 1000);
   
         console.log(`✅ Check-in message sent to ${userId}`);
       } catch (error) {
