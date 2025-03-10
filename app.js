@@ -8,15 +8,15 @@ const secretClient = new SecretManagerServiceClient();
 
 async function getSecret(secretName) {
   const [version] = await secretClient.accessSecretVersion({
-    name: `projects/${process.env.PROJECT_ID}/secrets/${secretName}/versions/latest`
+    name: `projects/check-in-bot-453300/secrets/${secretName}/versions/latest`
   });
   return version.payload.data.toString('utf8');
 }
 
 // Main function to bootstrap secrets and app
 (async () => {
-  const SLACK_BOT_TOKEN = await getSecret('SLACK_BOT_TOKEN');
-  const SLACK_SIGNING_SECRET = await getSecret('SLACK_SIGNING_SECRET');
+  const SLACK_BOT_TOKEN = await getSecret('bot-token');
+  const SLACK_SIGNING_SECRET = await getSecret('client-signing-secret');
 
   const receiver = new ExpressReceiver({
     signingSecret: SLACK_SIGNING_SECRET,
@@ -28,6 +28,20 @@ async function getSecret(secretName) {
     receiver,
   });
 
+
+  async function sendHealthCheckDM() {
+    try {
+      const YOUR_SLACK_USER_ID = 'UXXXXXXXX'; // <-- replace with your Slack User ID
+      await app.client.chat.postMessage({
+        channel: YOUR_SLACK_USER_ID,
+        text: "✅ Bot is running and ready to check in with members!"
+      });
+      console.log('✅ Sent health check DM to admin.');
+    } catch (error) {
+      console.error('❌ Failed to send health check DM:', error);
+    }
+  }
+  
   // Mass DM logic
   async function sendCheckInDMs() {
     try {
@@ -96,6 +110,7 @@ async function getSecret(secretName) {
   const PORT = process.env.PORT || 8080;
   expressApp.listen(PORT, () => {
     console.log(`⚡️ App running on port ${PORT}`);
+    sendHealthCheckDM();
   });
 
   // 🕒 Weekly scheduler (Every Monday at 9am)
