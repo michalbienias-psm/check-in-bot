@@ -73,8 +73,7 @@ async function getSecret(secretName) {
                   "emoji": true
                 },
                 "value": "click_me_123",
-                "url": "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67",
-                "action_id": "button-action"
+                "url": "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"
               }
             }
           ]
