@@ -45,62 +45,53 @@ async function getSecret(secretName) {
 
   // Mass DM logic
   async function sendCheckInDMs() {
-    try {
-      const users = await app.client.users.list({ token: SLACK_BOT_TOKEN });
-      const members = users.members.filter(u =>
-        !u.is_bot && !u.deleted && u.id !== 'USLACKBOT'
-      );
-
-      for (const user of members) {
-        try {
-          await app.client.chat.postMessage({
-            channel: user.id,
-            text: "👋 Hey! Just checking in to confirm you're still active in the organization.",
-            blocks: [
-              {
-                type: "section",
-                text: {
-                  type: "mrkdwn",
-                  text: "👋 Hey! Just checking in to confirm you're still active in the organization."
-                }
-              },
-              {
-                type: "actions",
-                elements: [
-                  {
-                    type: "button",
-                    text: {
-                      type: "plain_text",
-                      text: "✅ I'm still active"
-                    },
-                    style: "primary",
-                    value: user.id,
-                    action_id: "confirm_active"
-                  }
-                ]
+    const workflowUrl = "https://slack.com/shortcuts/YOUR-WORKFLOW-TRIGGER-ID"; // Replace this with your real Workflow link trigger URL
+  
+    // Replace with your user ID and one other test user
+    const testUserIds = [
+      'U01234567', // Your Slack User ID
+      'U089ABCDEF' // Another test user’s Slack User ID
+    ];
+  
+    for (const userId of testUserIds) {
+      try {
+        const dm = await app.client.conversations.open({ users: userId });
+  
+        await app.client.chat.postMessage({
+          channel: dm.channel.id,
+          text: "👋 It's time for your weekly check-in!",
+          blocks: [
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `👋 Hey! It's time for your weekly check-in. Please click the button below to fill out the form.`
               }
-            ]
-          });
-        } catch (err) {
-          console.error(`❌ DM to ${user.name} failed:`, err.message);
-        }
+            },
+            {
+              type: "actions",
+              elements: [
+                {
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    text: "📝 Fill Out Check-In Form"
+                  },
+                  url: workflowUrl,
+                  action_id: "workflow_link_button"
+                }
+              ]
+            }
+          ]
+        });
+  
+        console.log(`✅ Check-in message sent to ${userId}`);
+      } catch (error) {
+        console.error(`❌ Failed to send DM to ${userId}:`, error.message);
       }
-    } catch (error) {
-      console.error("❌ Failed to send check-ins:", error);
     }
   }
-
-  // Handle button click
-  app.action('confirm_active', async ({ ack, body, client }) => {
-    await ack();
-    const userId = body.user.id;
-    console.log(`✅ ${userId} confirmed they're active.`);
-
-    await client.chat.postMessage({
-      channel: userId,
-      text: "Thanks for confirming! 🙌"
-    });
-  });
+  
 
   // Optional: Health check route
   const expressApp = express();
@@ -119,12 +110,17 @@ async function getSecret(secretName) {
   expressApp.listen(PORT, () => {
     console.log(`⚡️ App running on port ${PORT}`);
     sendHealthCheckDM();
+    sendCheckInDMs();
   });
 
   // 🕒 Weekly scheduler (Every Monday at 9am)
+
+  /*
   cron.schedule('0 9 * * 1', () => {
     console.log('📅 Weekly check-in triggered...');
     sendCheckInDMs();
   });
+  */
 
+  
 })();
