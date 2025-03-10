@@ -50,7 +50,6 @@ async function getSecret(secretName) {
     // Replace with your user ID and one other test user
     const testUserIds = [
       'U08C80UHGLE', // Your Slack User ID
-      'U086U5M4F88' // Another test user’s Slack User ID
     ];
   
     for (const userId of testUserIds) {
@@ -59,28 +58,24 @@ async function getSecret(secretName) {
   
         await app.client.chat.postMessage({
           channel: dm.channel.id,
-          text: "👋 It's time for your weekly check-in!",
-          blocks: [
+          "blocks": [
             {
-              type: "section",
-              text: {
-                type: "mrkdwn",
-                text: `👋 Hey! It's time for your weekly check-in. Please click the button below to fill out the form.`
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "👋 Hey! It's time for your weekly check-in. Please click the button to fill out the form."
+              },
+              "accessory": {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Click Here",
+                  "emoji": true
+                },
+                "value": "click_me_123",
+                "url": "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67",
+                "action_id": "button-action"
               }
-            },
-            {
-              type: "actions",
-              elements: [
-                {
-                  type: "button",
-                  text: {
-                    type: "plain_text",
-                    text: "📝 Fill Out Check-In Form"
-                  },
-                  url: workflowUrl,
-                  action_id: "workflow_link_button"
-                }
-              ]
             }
           ]
         });
