@@ -49,8 +49,8 @@ async function getSecret(secretName) {
   
     // Replace with your user ID and one other test user
     const testUserIds = [
-      'U01234567', // Your Slack User ID
-      'U089ABCDEF' // Another test user’s Slack User ID
+      'U08C80UHGLE', // Your Slack User ID
+      'U086U5M4F88' // Another test user’s Slack User ID
     ];
   
     for (const userId of testUserIds) {
