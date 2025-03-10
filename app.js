@@ -63,7 +63,7 @@ async function getSecret(secretName) {
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "👋 Hey! It's time for your weekly check-in. Please click the button to fill out the form."
+                "text": "👋 Hey! It's time for your weekly check-in. Please click the button."
               },
               "accessory": {
                 "type": "button",
