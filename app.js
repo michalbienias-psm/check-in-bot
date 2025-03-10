@@ -106,6 +106,13 @@ async function getSecret(secretName) {
   const expressApp = express();
   expressApp.get('/', (req, res) => res.send('Slack bot is running 🚀'));
   expressApp.use('/slack/events', receiver.app);
+  expressApp.post("/slack/events", express.json(), (req, res, next) => {
+    if (req.body && req.body.type === "url_verification") {
+      console.log("✅ Slack challenge verification received");
+      return res.status(200).send(req.body.challenge);
+    }
+    next();
+  });
 
   // Start Express server
   const PORT = process.env.PORT || 8080;
