@@ -45,7 +45,7 @@ async function getSecret(secretName) {
 
   // Mass DM logic
   async function sendCheckInDMs() {
-    const workflowUrl = "https://slack.com/shortcuts/YOUR-WORKFLOW-TRIGGER-ID"; // Replace this with your real Workflow link trigger URL
+    const workflowUrl = "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"; // Replace this with your real Workflow link trigger URL
   
     // Replace with your user ID and one other test user
     const testUserIds = [
