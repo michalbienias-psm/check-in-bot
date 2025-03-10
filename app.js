@@ -25,13 +25,14 @@ async function getSecret(secretName) {
 
   const app = new App({
     token: SLACK_BOT_TOKEN,
+    signingSecret: SLACK_SIGNING_SECRET,
     receiver,
   });
 
 
   async function sendHealthCheckDM() {
     try {
-      const YOUR_SLACK_USER_ID = 'UXXXXXXXX'; // <-- replace with your Slack User ID
+      const YOUR_SLACK_USER_ID = 'U08C80UHGLE'; // <-- replace with your Slack User ID
       await app.client.chat.postMessage({
         channel: YOUR_SLACK_USER_ID,
         text: "✅ Bot is running and ready to check in with members!"
@@ -41,7 +42,7 @@ async function getSecret(secretName) {
       console.error('❌ Failed to send health check DM:', error);
     }
   }
-  
+
   // Mass DM logic
   async function sendCheckInDMs() {
     try {
