@@ -45,59 +45,67 @@ async function getSecret(secretName) {
 
   // Mass DM logic
   async function sendCheckInDMs() {
-    const workflowUrl = "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"; // Replace this with your real Workflow link trigger URL
-  
-    // Replace with your user ID and one other test user
-    const testUserIds = [
-      'U08C80UHGLE', // Your Slack User ID
-    ];
-  
-    for (const userId of testUserIds) {
+    
+    /*
+    const users = await app.client.users.list({ token: SLACK_BOT_TOKEN });
+    const members = users.members.filter(u =>
+      !u.is_bot && !u.deleted && u.id !== 'USLACKBOT'
+    );
+  */
+
+    const members = ("U08C80UHGLE", "U086U5M4F88");
+    for (const user of members) {
       try {
-        const dm = await app.client.conversations.open({ users: userId });
+        const dm = await app.client.conversations.open({ users: user.id });
   
         const result = await app.client.chat.postMessage({
           channel: dm.channel.id,
-          "blocks": [
+          blocks: [
             {
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "👋 Hey! It's time for your weekly check-in. Please click the button."
+              type: "section",
+              text: {
+                type: "plain_text",
+                text: "👋 Hey! Please fill out this weekly progress check. You will receive these every Friday and have 48 hours to respond."
+              }
+            },
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: "Please click the button."
               },
-              "accessory": {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "text": "Click Here",
-                  "emoji": true
+              accessory: {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "Start Weekly Check In ",
+                  emoji: true
                 },
-                "url": "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"
+                url: "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"
               }
             }
           ]
         });
-
-        // Schedule delete after 60 seconds (for testing)
+  
+        // Schedule delete after 48 hours
         setTimeout(async () => {
           try {
             await app.client.chat.delete({
               channel: result.channel,
               ts: result.ts
             });
-            console.log(`🗑️ Deleted message sent to ${userId}`);
+            console.log(`🗑️ Deleted message sent to ${user.id}`);
           } catch (err) {
             console.error("❌ Failed to delete message:", err);
           }
-        }, (48 * 60 * 60 * 1000));
+        }, 60 * 60 * 1000);
   
-        console.log(`✅ Check-in message sent to ${userId}`);
+        console.log(`✅ Check-in message sent to ${user.id}`);
       } catch (error) {
-        console.error(`❌ Failed to send DM to ${userId}:`, error.message);
+        console.error(`❌ Failed to send DM to ${user.id}:`, error.message);
       }
     }
   }
-  
 
   // Optional: Health check route
   const expressApp = express();
@@ -120,9 +128,9 @@ async function getSecret(secretName) {
   });
 
   // 🕒 Weekly scheduler (Every Friday at 6pm)
-  cron.schedule('0 18 * * 5', () => {
-    console.log('📅 Weekly check-in triggered (Friday 6PM)...');
-    sendCheckInDMs();
-  });  
+  //cron.schedule('0 18 * * 5', () => {
+    //console.log('📅 Weekly check-in triggered (Friday 6PM)...');
+    //sendCheckInDMs();
+  //});  
   
 })();
