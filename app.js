@@ -97,6 +97,21 @@ async function getSecret(secretName) {
     });
   });
 
+  app.view('checkin_form', async ({ ack, body, view}) => {
+    await ack();
+  
+    const user = body.user.id;
+    const response1 = view.state.values.task_1.response.value;
+    const response2 = view.state.values.task_2.response.value;
+    const response3 = view.state.values.task_3.response.value;
+  
+    console.log(`✅ ${user} submitted their check-in:`);
+    console.log('👉 Response 1:', response1);
+    console.log('👉 Response 2:', response2);
+    console.log('👉 Response 3:', response3);
+  });
+  
+
   // Express server setup
   const expressApp = express();
   expressApp.get('/', (req, res) => res.send('Slack bot is running 🚀'));
