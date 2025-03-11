@@ -82,5 +82,5 @@ const PORT = process.env.PORT || 8080;
 expressApp.listen(PORT, () => {
   console.log(`⚡ Server running on http://localhost:${PORT}`);
   // Test user ID here (replace with your Slack user ID)
-  sendButtonDM('U1234567890'); // ← change this
+  sendButtonDM('U08C80UHGLE'); // ← change this
 });
