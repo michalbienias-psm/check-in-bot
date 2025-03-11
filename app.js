@@ -64,40 +64,36 @@ async function getSecret(secretName) {
   }
 
   app.action('start_checkin_click', async ({ ack }) => {
-    await ack(); // acknowledge the click, nothing else needed
-    app.action('start_checkin_click', async ({ ack, body, client }) => {
-      await ack();
-    
-      await client.views.open({
-        trigger_id: body.trigger_id,
-        view: {
-          type: 'modal',
-          callback_id: 'checkin_form',
-          title: { type: 'plain_text', text: 'Weekly Check-In' },
-          submit: { type: 'plain_text', text: 'Submit' },
-          close: { type: 'plain_text', text: 'Cancel' },
-          blocks: [
-            {
-              type: 'input',
-              block_id: 'task_1',
-              label: { type: 'plain_text', text: 'What’s one thing you did this week?' },
-              element: { type: 'plain_text_input', action_id: 'response' }
-            },
-            {
-              type: 'input',
-              block_id: 'task_2',
-              label: { type: 'plain_text', text: 'Another contribution?' },
-              element: { type: 'plain_text_input', action_id: 'response' }
-            },
-            {
-              type: 'input',
-              block_id: 'task_3',
-              label: { type: 'plain_text', text: 'One more thing?' },
-              element: { type: 'plain_text_input', action_id: 'response' }
-            }
-          ]
-        }
-      });
+    await ack();
+    await client.views.open({
+      trigger_id: body.trigger_id,
+      view: {
+        type: 'modal',
+        callback_id: 'checkin_form',
+        title: { type: 'plain_text', text: 'Weekly Check-In' },
+        submit: { type: 'plain_text', text: 'Submit' },
+        close: { type: 'plain_text', text: 'Cancel' },
+        blocks: [
+          {
+            type: 'input',
+            block_id: 'task_1',
+            label: { type: 'plain_text', text: 'What’s one thing you did this week?' },
+            element: { type: 'plain_text_input', action_id: 'response' }
+          },
+          {
+            type: 'input',
+            block_id: 'task_2',
+            label: { type: 'plain_text', text: 'Another contribution?' },
+            element: { type: 'plain_text_input', action_id: 'response' }
+          },
+          {
+            type: 'input',
+            block_id: 'task_3',
+            label: { type: 'plain_text', text: 'One more thing?' },
+            element: { type: 'plain_text_input', action_id: 'response' }
+          }
+        ]
+      }
     });
   });
 
