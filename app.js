@@ -27,38 +27,25 @@ async function getSecret(secretName) {
     receiver
   });
 
-  // 👇 BUTTON HANDLER TO OPEN MODAL
-  app.action('start_checkin_click', async ({ ack, body, client }) => {
+  // 🔘 Handle button click → open modal
+  app.action('open_modal_button', async ({ ack, body, client }) => {
     await ack();
-    console.log(`✅ Received button click from user: ${body.user.id}`);
+    console.log(`✅ Button clicked by user: ${body.user.id}`);
 
     try {
       await client.views.open({
         trigger_id: body.trigger_id,
         view: {
           type: 'modal',
-          callback_id: 'checkin_form',
-          title: { type: 'plain_text', text: 'Weekly Check-In' },
-          submit: { type: 'plain_text', text: 'Submit' },
-          close: { type: 'plain_text', text: 'Cancel' },
+          title: { type: 'plain_text', text: 'Hello Modal' },
+          close: { type: 'plain_text', text: 'Close' },
           blocks: [
             {
-              type: 'input',
-              block_id: 'task_1',
-              label: { type: 'plain_text', text: 'What’s one thing you did this week?' },
-              element: { type: 'plain_text_input', action_id: 'response' }
-            },
-            {
-              type: 'input',
-              block_id: 'task_2',
-              label: { type: 'plain_text', text: 'Another contribution?' },
-              element: { type: 'plain_text_input', action_id: 'response' }
-            },
-            {
-              type: 'input',
-              block_id: 'task_3',
-              label: { type: 'plain_text', text: 'One more thing?' },
-              element: { type: 'plain_text_input', action_id: 'response' }
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: '👋 This is a minimal test modal!'
+              }
             }
           ]
         }
@@ -68,65 +55,50 @@ async function getSecret(secretName) {
     }
   });
 
-  // 👇 HANDLE FORM SUBMISSION
-  app.view('checkin_form', async ({ ack, body, view, client }) => {
-    await ack();
-    const user = body.user.id;
+  // 📤 Send initial DM with button
+  async function sendTestDM() {
+    const userIds = ['U08C80UHGLE']; // Replace with your test user ID(s)
 
-    const response1 = view.state.values.task_1.response.value;
-    const response2 = view.state.values.task_2.response.value;
-    const response3 = view.state.values.task_3.response.value;
-
-    console.log(`✅ ${user} submitted:`, { response1, response2, response3 });
-
-    await client.chat.postMessage({
-      channel: user,
-      text: `✅ Thanks for submitting your weekly check-in! 🙌\n• ${response1}\n• ${response2}\n• ${response3}`
-    });
-  });
-
-  // 👇 DM MESSAGE WITH BUTTON
-  async function sendCheckInDMs() {
-    const members = ['U08C80UHGLE']; // Your test Slack user ID(s)
-    for (const userId of members) {
+    for (const userId of userIds) {
       try {
         const dm = await app.client.conversations.open({ users: userId });
 
         await app.client.chat.postMessage({
           channel: dm.channel.id,
-          text: "It's check-in time!",
+          text: 'Click the button below to open a modal.',
           blocks: [
             {
-              type: "section",
+              type: 'section',
               text: {
-                type: "mrkdwn",
-                text: "*It's time for your weekly check-in.* Click the button below."
+                type: 'mrkdwn',
+                text: '*Test Modal Trigger:* Click the button below.'
               },
               accessory: {
-                type: "button",
-                text: { type: "plain_text", text: "Start Weekly Check In", emoji: true },
-                action_id: "start_checkin_click"
+                type: 'button',
+                text: { type: 'plain_text', text: 'Open Modal' },
+                action_id: 'open_modal_button'
               }
             }
           ]
         });
 
-        console.log(`✅ Check-in message sent to ${userId}`);
+        console.log(`✅ Sent test DM to ${userId}`);
       } catch (err) {
-        console.error(`❌ Failed to send check-in message to ${userId}:`, err.message);
+        console.error(`❌ Failed to send DM to ${userId}:`, err.message);
       }
     }
   }
 
-  // Start express server
+  // 🌐 Start express server for Cloud Run
   const expressApp = express();
-  expressApp.use('/slack/events', receiver.app);
+  expressApp.use('/', receiver.app); // mount root — don't double prefix
+
   expressApp.get('/', (req, res) => res.send('Slack bot is running 🚀'));
 
   const PORT = process.env.PORT || 8080;
   expressApp.listen(PORT, () => {
     console.log(`⚡️ App running on port ${PORT}`);
-    sendCheckInDMs(); // Send once on startup
+    sendTestDM(); // Send DM on startup for test
   });
 
 })();
