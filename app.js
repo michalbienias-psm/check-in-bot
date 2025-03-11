@@ -63,7 +63,7 @@ async function getSecret(secretName) {
     }
   }
 
-  app.action('start_checkin_click', async ({ ack }) => {
+  app.action('start_checkin_click', async ({ ack, body, client }) => {
     await ack();
     await client.views.open({
       trigger_id: body.trigger_id,
