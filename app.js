@@ -72,7 +72,6 @@ async function getSecret(secretName) {
                   "text": "Click Here",
                   "emoji": true
                 },
-                "value": "click_me_123",
                 "url": "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"
               }
             }
@@ -90,7 +89,7 @@ async function getSecret(secretName) {
           } catch (err) {
             console.error("❌ Failed to delete message:", err);
           }
-        }, 60 * 1000);
+        }, (48 * 60 * 60 * 1000));
   
         console.log(`✅ Check-in message sent to ${userId}`);
       } catch (error) {
@@ -120,14 +119,10 @@ async function getSecret(secretName) {
     sendCheckInDMs();
   });
 
-  // 🕒 Weekly scheduler (Every Monday at 9am)
-
-  /*
-  cron.schedule('0 9 * * 1', () => {
-    console.log('📅 Weekly check-in triggered...');
+  // 🕒 Weekly scheduler (Every Friday at 6pm)
+  cron.schedule('0 18 * * 5', () => {
+    console.log('📅 Weekly check-in triggered (Friday 6PM)...');
     sendCheckInDMs();
-  });
-  */
-
+  });  
   
 })();
