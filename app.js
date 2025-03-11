@@ -59,7 +59,7 @@ async function getSecret(secretName) {
         const dm = await app.client.conversations.open({ users: user.id });
   
         const result = await app.client.chat.postMessage({
-          channel: dm.channel.id,
+          channel: user.id,
           blocks: [
             {
               type: "section",
