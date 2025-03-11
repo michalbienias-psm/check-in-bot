@@ -20,7 +20,7 @@ async function getSecret(secretName) {
 
   const receiver = new ExpressReceiver({
     signingSecret: SLACK_SIGNING_SECRET,
-    endpoints: "/",
+    endpoints: '/slack/events',
     processBeforeResponse: true // 🔥 This is the missing piece
   });
 
@@ -109,7 +109,7 @@ async function getSecret(secretName) {
   // Express server setup
   const expressApp = express();
   expressApp.get('/', (req, res) => res.send('Slack bot is running 🚀'));
-  expressApp.use('/', receiver.app);
+  expressApp.use('/slack/events', receiver.app);
 
   // Start Express server
   const PORT = process.env.PORT || 8080;
