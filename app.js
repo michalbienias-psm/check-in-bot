@@ -21,6 +21,7 @@ async function getSecret(secretName) {
   const receiver = new ExpressReceiver({
     signingSecret: SLACK_SIGNING_SECRET,
     endpoints: '/slack/events',
+    processBeforeResponse: true // 🔥 This is the missing piece
   });
 
   const app = new App({
