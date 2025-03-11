@@ -77,7 +77,6 @@ async function getSecret(secretName) {
   const PORT = process.env.PORT || 8080;
   expressApp.listen(PORT, () => {
     console.log(`⚡️ App running on port ${PORT}`);
-    sendHealthCheckDM();
     sendCheckInDMs(); // You can comment this out if you only want scheduled sends
   });
 
