@@ -29,10 +29,9 @@ async function getSecret(secretName) {
     receiver,
   });
 
-
   async function sendHealthCheckDM() {
     try {
-      const YOUR_SLACK_USER_ID = 'U08C80UHGLE'; // <-- replace with your Slack User ID
+      const YOUR_SLACK_USER_ID = 'U08C80UHGLE';
       await app.client.chat.postMessage({
         channel: YOUR_SLACK_USER_ID,
         text: "✅ Bot is running and ready to check in with members!"
@@ -45,21 +44,14 @@ async function getSecret(secretName) {
 
   // Mass DM logic
   async function sendCheckInDMs() {
-    
-    /*
-    const users = await app.client.users.list({ token: SLACK_BOT_TOKEN });
-    const members = users.members.filter(u =>
-      !u.is_bot && !u.deleted && u.id !== 'USLACKBOT'
-    );
-  */
+    const members = ["U08C80UHGLE", "U086U5M4F88"];
 
-    const members = ("U08C80UHGLE", "U086U5M4F88");
-    for (const user of members) {
+    for (const userId of members) {
       try {
-        const dm = await app.client.conversations.open({ users: user.id });
-  
+        const dm = await app.client.conversations.open({ users: userId });
+
         const result = await app.client.chat.postMessage({
-          channel: user,
+          channel: dm.channel.id,
           blocks: [
             {
               type: "section",
@@ -78,7 +70,7 @@ async function getSecret(secretName) {
                 type: "button",
                 text: {
                   type: "plain_text",
-                  text: "Start Weekly Check In ",
+                  text: "Start Weekly Check In",
                   emoji: true
                 },
                 url: "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"
@@ -86,7 +78,7 @@ async function getSecret(secretName) {
             }
           ]
         });
-  
+
         // Schedule delete after 48 hours
         setTimeout(async () => {
           try {
@@ -94,20 +86,20 @@ async function getSecret(secretName) {
               channel: result.channel,
               ts: result.ts
             });
-            console.log(`🗑️ Deleted message sent to ${user.id}`);
+            console.log(`🗑️ Deleted message sent to ${userId}`);
           } catch (err) {
             console.error("❌ Failed to delete message:", err);
           }
-        }, 60 * 60 * 1000);
-  
-        console.log(`✅ Check-in message sent to ${user.id}`);
+        }, 48 * 60 * 60 * 1000); // 48 hours in milliseconds
+
+        console.log(`✅ Check-in message sent to ${userId}`);
       } catch (error) {
-        console.error(`❌ Failed to send DM to ${user.id}:`, error.message);
+        console.error(`❌ Failed to send DM to ${userId}:`, error.message);
       }
     }
   }
 
-  // Optional: Health check route
+  // Express server setup
   const expressApp = express();
   expressApp.get('/', (req, res) => res.send('Slack bot is running 🚀'));
   expressApp.use('/slack/events', receiver.app);
@@ -124,13 +116,15 @@ async function getSecret(secretName) {
   expressApp.listen(PORT, () => {
     console.log(`⚡️ App running on port ${PORT}`);
     sendHealthCheckDM();
-    sendCheckInDMs();
+    sendCheckInDMs(); // You can comment this out if you only want scheduled sends
   });
 
   // 🕒 Weekly scheduler (Every Friday at 6pm)
-  //cron.schedule('0 18 * * 5', () => {
-    //console.log('📅 Weekly check-in triggered (Friday 6PM)...');
-    //sendCheckInDMs();
-  //});  
-  
+  /*
+  cron.schedule('0 18 * * 5', () => {
+    console.log('📅 Weekly check-in triggered (Friday 6PM)...');
+    sendCheckInDMs();
+  });
+  */
+
 })();
