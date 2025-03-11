@@ -44,7 +44,7 @@ async function getSecret(secretName) {
 
   // Mass DM logic
   async function sendCheckInDMs() {
-    const members = ["U08C80UHGLE", "U086U5M4F88"];
+    const members = ["U08C80UHGLE"];
 
     for (const userId of members) {
       try {
@@ -73,7 +73,8 @@ async function getSecret(secretName) {
                   text: "Start Weekly Check In",
                   emoji: true
                 },
-                url: "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67"
+                url: "https://slack.com/shortcuts/Ft08GUEQJXUM/f02c515fa6712d8cf2212ded9cabde67",
+                action_id: "start_checkin_click"
               }
             }
           ]
@@ -98,6 +99,10 @@ async function getSecret(secretName) {
       }
     }
   }
+
+  app.action('start_checkin_click', async ({ ack }) => {
+    await ack(); // acknowledge the click, nothing else needed
+  });
 
   // Express server setup
   const expressApp = express();
