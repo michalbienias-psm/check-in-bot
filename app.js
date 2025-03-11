@@ -102,6 +102,7 @@ async function getSecret(secretName) {
   }
 
   app.action('start_checkin_click', async ({ ack }) => {
+    console.log("✅ Button clicked by user:", body?.user?.id);
     await ack(); // acknowledge the click, nothing else needed
   });
 
